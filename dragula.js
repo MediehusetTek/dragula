@@ -11,9 +11,6 @@ function dragula (initialContainers, options) {
     initialContainers = [];
   }
 
-  var doc = options.document || document;
-  var body = doc.body;
-  var documentElement = doc.documentElement;
   var _mirror; // mirror image
   var _source; // source container
   var _item; // item being dragged
@@ -29,6 +26,10 @@ function dragula (initialContainers, options) {
   var _grabbed; // holds mousedown context until first mousemove
 
   var o = options || {};
+  var doc = o.document || document;
+  var documentElement = doc.documentElement;
+  var body = doc.body;
+
   if (o.moves === void 0) { o.moves = always; }
   if (o.accepts === void 0) { o.accepts = always; }
   if (o.invalid === void 0) { o.invalid = invalidTarget; }
@@ -370,9 +371,8 @@ function dragula (initialContainers, options) {
     var y = clientY - _offsetY;
 
     if (o.centerItemToCursor) {
-      var clientRect = _mirror.getBoundingClientRect();
-      x = (clientX - clientRect.width/2);
-      y = (clientY - clientRect.height/2);
+      x = clientX - _mirror.width / 2;
+      y = clientY - _mirror.height / 2;
     }
 
     _mirror.style.left = x + 'px';
@@ -425,7 +425,8 @@ function dragula (initialContainers, options) {
     function over () { if (changed) { moved('over'); } }
     function out () { if (_lastDropTarget) { moved('out'); } }
     function countPreviousSiblings(el) {
-      for (var i = 0; el.previousSibling; i++) {
+      var i;
+      for (i = 0; el.previousSibling; i++) {
         el = el.previousSibling;
       }
       return i;
@@ -446,8 +447,10 @@ function dragula (initialContainers, options) {
     }
     var rect = _item.getBoundingClientRect();
     _mirror = _item.cloneNode(true);
-    _mirror.style.width = getRectWidth(rect) + 'px';
-    _mirror.style.height = getRectHeight(rect) + 'px';
+    _mirror.width = getRectWidth(rect);
+    _mirror.height = getRectHeight(rect);
+    _mirror.style.width = _mirror.width + 'px';
+    _mirror.style.height = _mirror.height + 'px';
     classes.rm(_mirror, 'gu-transit');
     classes.add(_mirror, 'gu-mirror');
     _mirror.setAttribute('data-mce-bogus', 'all');
@@ -626,7 +629,6 @@ function dragula (initialContainers, options) {
     return host[coord];
   }
 }
-
 
 module.exports = dragula;
 
