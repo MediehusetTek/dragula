@@ -43,6 +43,7 @@ function dragula (initialContainers, options) {
   if (o.ignoreInputTextSelection === void 0) { o.ignoreInputTextSelection = true; }
   if (o.mirrorContainer === void 0) { o.mirrorContainer = body; }
   if (o.centerItemToCursor === void 0) { o.centerItemToCursor = false; }
+  if (o.tinymceMode === void 0) { o.tinymceMode = false; }
 
   var drake = emitter({
     containers: o.containers,
@@ -453,7 +454,9 @@ function dragula (initialContainers, options) {
     _mirror.style.height = _mirror.height + 'px';
     classes.rm(_mirror, 'gu-transit');
     classes.add(_mirror, 'gu-mirror');
-    _mirror.setAttribute('data-mce-bogus', 'all');
+    if (o.tinymceMode) {
+      _mirror.setAttribute('data-mce-bogus', 'all');
+    }
     o.mirrorContainer.appendChild(_mirror);
     touchy(documentElement, 'add', 'mousemove', drag);
     classes.add(o.mirrorContainer, 'gu-unselectable');
@@ -585,7 +588,7 @@ function dragula (initialContainers, options) {
   function getRectWidth (rect) { return rect.width || (rect.right - rect.left); }
   function getRectHeight (rect) { return rect.height || (rect.bottom - rect.top); }
   function getParent (el) { return el.parentNode === doc ? null : el.parentNode; }
-  function isInput (el) { return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || isEditable(el); }
+  function isInput (el) { return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' || (!o.tinymceMode && isEditable(el)); }
   function isEditable (el) {
     if (!el) { return false; } // no parents were editable
     if (el.contentEditable === 'false') { return false; } // stop the lookup
